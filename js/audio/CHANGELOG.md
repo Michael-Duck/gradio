@@ -2,6 +2,12 @@
 
 ## 0.24.4
 
+### Dependency updates
+
+- @gradio/client@2.7.2
+
+## 0.24.4
+
 ### Fixes
 
 - [#13901](https://github.com/gradio-app/gradio/pull/13901) [`e918914`](https://github.com/gradio-app/gradio/commit/e918914c7d2f6015b2eac268bf53a5cd75fe871b) - Release the microphone when a streaming gr.Audio recording is stopped.  Thanks @hysts!

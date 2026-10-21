@@ -2,6 +2,12 @@
 
 ## 0.11.0
 
+### Dependency updates
+
+- @gradio/client@2.7.2
+
+## 0.11.0
+
 ### Features
 
 - [`db9699e`](https://github.com/gradio-app/gradio/commit/db9699e0bfd364ef7ca104e348618cf235d1d0be) - Name rejected files in upload errors and fix a Document leak in sanitize.  Thanks @abidlabs!

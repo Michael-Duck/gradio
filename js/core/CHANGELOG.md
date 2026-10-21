@@ -1,5 +1,15 @@
 # @gradio/core
 
+## 1.12.3
+
+### Fixes
+
+- [#13981](https://github.com/gradio-app/gradio/pull/13981) [`68a1122`](https://github.com/gradio-app/gradio/commit/68a112234da6f48df003d0de9449b455ac5d9e5b) - Don't save runs started by a Timer tick or a page load to run history.  Thanks @hysts!
+
+### Dependency updates
+
+- @gradio/client@2.7.2
+
 ## 1.12.2
 
 ### Fixes

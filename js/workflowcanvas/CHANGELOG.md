@@ -1,5 +1,19 @@
 # @gradio/workflowcanvas
 
+## 0.14.0
+
+### Features
+
+- [#13966](https://github.com/gradio-app/gradio/pull/13966) [`4b58c80`](https://github.com/gradio-app/gradio/commit/4b58c80fd67fe42bd4c1b1533a1c825afb1a979d) - forward ZeroGPU X-IP-Token from gr.Workflow + stop reporting quota errors as GPU unavailable.  Thanks @hannahblair!
+- [#13994](https://github.com/gradio-app/gradio/pull/13994) [`15199c0`](https://github.com/gradio-app/gradio/commit/15199c0faf5fa2a477ab9cf25178010ce8bc480e) - handle system clashing with browser scrolling in `gr.workflow`.  Thanks @hannahblair!
+- [#13996](https://github.com/gradio-app/gradio/pull/13996) [`336590f`](https://github.com/gradio-app/gradio/commit/336590f061a3ee59ca9592e3c6675bad616e35eb) - workflow: ensure inline checkbox works.  Thanks @hannahblair!
+- [#13963](https://github.com/gradio-app/gradio/pull/13963) [`3570032`](https://github.com/gradio-app/gradio/commit/35700328a4dbe4a96708ed891dc661db7102dae5) - ensure app/workflow toggle is visible in tall spaces.  Thanks @hannahblair!
+- [#13970](https://github.com/gradio-app/gradio/pull/13970) [`c270f35`](https://github.com/gradio-app/gradio/commit/c270f35d91995d3f33b77b9504567d6d1c9b7216) - Don't flash the app view before showing a Workflow Space's owner the canvas.  Thanks @abidlabs!
+
+### Dependency updates
+
+- @gradio/client@2.7.2
+
 ## 0.13.0
 
 ### Features

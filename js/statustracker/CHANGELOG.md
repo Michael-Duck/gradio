@@ -2,6 +2,12 @@
 
 ## 0.15.4
 
+### Dependency updates
+
+- @gradio/sanitize@0.4.3
+
+## 0.15.4
+
 ### Fixes
 
 - [`0f889f0`](https://github.com/gradio-app/gradio/commit/0f889f075fe42409dbdeac510362e8307565e099) - Clear the loading status when a validator rejects an event.  Thanks @hysts!
