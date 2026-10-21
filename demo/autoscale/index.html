@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Gradio autoscale lab</title>
+  <style>
+    body {
+      font: 15px system-ui;
+      color: #1f2937;
+      max-width: 1050px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    h1 {
+      font-weight: 600;
+    }
+    p {
+      color: #6b7280;
+    }
+    button,
+    input,
+    select {
+      font: inherit;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    button {
+      background: #fff7ed;
+      color: #9a3412;
+      cursor: pointer;
+    }
+    section {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: 6px;
+    }
+    label {
+      display: block;
+      margin: 12px 0;
+    }
+    #cards {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #f9fafb;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      font: inherit;
+    }
+    #error {
+      color: #b91c1c;
+    }
+  </style>
+  <h1>Gradio autoscale lab</h1>
+  <p>
+    Real persistent processes. One model initialization per worker. Replicas
+    grow only when demand and observed memory allow it.
+  </p>
+  <section>
+    <label
+      >Workload
+      <select id="workload">
+        <option value="python">Pure Python computation</option>
+        <option value="kokoro">Kokoro TTS</option>
+        <option value="medium">Medium GPU model</option>
+        <option value="large">Large GPU model</option>
+      </select></label
+    ><label
+      >Control token (remote configuration only)
+      <input id="token" type="password" /></label
+    ><label
+      ><input id="auto" type="checkbox" checked /> Autoscale to two
+      workers</label
+    ><button id="configure">Apply workload (resets workers)</button
+    ><label
+      >Input
+      <textarea id="text">
+The sky is blue because sunlight scatters in the atmosphere.</textarea
+      ></label
+    ><button id="warm">Warm up (4 requests)</button>
+    <button id="run">Run one request</button>
+    <button id="burst">Run 12 concurrent requests</button
+    ><button id="sustain">Run sustained load (60s)</button>
+    <p id="progress"></p>
+    <p id="error" role="alert"></p>
+  </section>
+  <div id="cards"></div>
+  <section>
+    <h2>Live output</h2>
+    <pre id="output">Ready</pre>
+  </section>
+  <section>
+    <h2>Scaling decisions</h2>
+    <pre id="events"></pre>
+    <details>
+      <summary>Memory telemetry</summary>
+      <pre id="memory"></pre>
+    </details>
+  </section>
+  <script>
+    const el = (id) => document.getElementById(id);
+    el("configure").onclick = async () => {
+      try {
+        const r = await fetch("/configure", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-control-token": el("token").value,
+          },
+          body: JSON.stringify({
+            workload: el("workload").value,
+            autoscale: el("auto").checked,
+          }),
+        });
+        if (!r.ok) throw Error(await r.text());
+        el("output").textContent =
+          "Configured. The first request initializes the first worker.";
+      } catch (e) {
+        el("error").textContent = e.message;
+      }
+    };
+    async function run() {
+      const r = await fetch("/gradio_api/call/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: [el("text").value] }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw Error(JSON.stringify(data));
+      return new Promise((resolve, reject) => {
+        const stream = new EventSource(
+          "/gradio_api/call/predict/" + data.event_id,
+        );
+        stream.addEventListener(
+          "generating",
+          (e) =>
+            (el("output").textContent = JSON.stringify(
+              JSON.parse(e.data),
+              null,
+              2,
+            )),
+        );
+        stream.addEventListener("complete", (e) => {
+          el("output").textContent = JSON.stringify(
+            JSON.parse(e.data),
+            null,
+            2,
+          );
+          stream.close();
+          resolve();
+        });
+        stream.addEventListener("error", (e) => {
+          stream.close();
+          reject(Error(e.data || "Stream disconnected"));
+        });
+      });
+    }
+    async function batch(n) {
+      el("error").textContent = "";
+      el("run").disabled = el("burst").disabled = true;
+      try {
+        await Promise.all(Array.from({ length: n }, run));
+      } catch (e) {
+        el("error").textContent = e.message;
+      } finally {
+        el("run").disabled = el("burst").disabled = false;
+      }
+    }
+    el("run").onclick = () => batch(1);
+    el("burst").onclick = () => batch(12);
+    el("warm").onclick = async () => {
+      try {
+        for (let i = 0; i < 4; i++) {
+          await run();
+          el("progress").textContent = `Warmup ${i + 1}/4 completed`;
+        }
+      } catch (e) {
+        el("error").textContent = e.message;
+      }
+    };
+    el("sustain").onclick = async () => {
+      el("sustain").disabled = true;
+      el("error").textContent = "";
+      let count = 0;
+      const start = performance.now();
+      try {
+        await Promise.all(
+          Array.from({ length: 4 }, async () => {
+            while (performance.now() - start < 60000) {
+              await run();
+              count++;
+              el("progress").textContent =
+                `${count} requests completed in ${((performance.now() - start) / 1000).toFixed(1)}s`;
+            }
+          }),
+        );
+      } catch (e) {
+        el("error").textContent = e.message;
+      } finally {
+        el("sustain").disabled = false;
+      }
+    };
+    async function refresh() {
+      try {
+        const d = await (await fetch("/metrics")).json();
+        el("cards").replaceChildren();
+        for (const w of d.workers) {
+          const c = document.createElement("div");
+          c.className = "card";
+          c.textContent = `PID ${w.pid || "starting"} · ${w.busy ? "busy" : w.ready ? "ready" : "loading"} · ${w.completed} requests · loads ${JSON.stringify(w.resource_initializations || [])} · RAM ${(w.peak_ram / 2 ** 30).toFixed(2)} GiB · GPU ${(w.peak_gpu / 2 ** 30).toFixed(2)} GiB`;
+          el("cards").append(c);
+        }
+        el("events").textContent =
+          `Waiting: ${d.pending}\n` +
+          d.events
+            .slice(-12)
+            .map((e) => e.reason)
+            .join("\n");
+        el("memory").textContent = JSON.stringify(d.memory, null, 2);
+      } catch {}
+      setTimeout(refresh, 1000);
+    }
+    refresh();
+  </script>
+</html>

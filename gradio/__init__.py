@@ -288,3 +288,6 @@ __all__ = [
     "Workflow",
     "WorkflowCanvas",
 ]
+
+# Experimental process-queue entry point.
+App = Server

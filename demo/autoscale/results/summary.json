@@ -1,0 +1,685 @@
+[
+  {
+    "source": "autoscale-gpu-v3-kokoro.json.gz",
+    "url": "https://abidlabs-gradio-queue-autoscale-poc.hf.space",
+    "workload": "kokoro",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 128,
+        "ramp_seconds": 8.498504666000372,
+        "steady_seconds": 8.565271541010588,
+        "serving_pids": [
+          131
+        ],
+        "steady_serving_pids": [
+          131
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 2.1419448852539062,
+        "peak_worker_gpu_gib": 1.21484375,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600528.749162,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600549.1087027,
+            "reason": "Replica ready",
+            "pid": 131
+          }
+        ],
+        "model": "kokoro"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 128,
+        "ramp_seconds": 10.257125708012609,
+        "steady_seconds": 7.212835834012367,
+        "serving_pids": [
+          182,
+          202
+        ],
+        "steady_serving_pids": [
+          182,
+          202
+        ],
+        "max_observed_processes": 2,
+        "peak_worker_ram_gib": 2.0618743896484375,
+        "peak_worker_gpu_gib": 1.212890625,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600570.8095376,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600589.7148316,
+            "reason": "Replica ready",
+            "pid": 182
+          },
+          {
+            "time": 1792600592.5289874,
+            "reason": "Observed replica peak plus 25% margin and 15% device reserve fits"
+          },
+          {
+            "time": 1792600592.5289922,
+            "reason": "Initializing replica",
+            "workers": 2
+          },
+          {
+            "time": 1792600611.246117,
+            "reason": "Replica ready",
+            "pid": 202
+          },
+          {
+            "time": 1792600612.6445346,
+            "reason": "Replica performance observed",
+            "throughput": 27.328732665666877,
+            "baseline_throughput": 13.21272860365834,
+            "median_seconds": 0.07689414400010719
+          },
+          {
+            "time": 1792600612.644538,
+            "reason": "Extra replica retained: throughput improved"
+          }
+        ],
+        "model": "kokoro"
+      }
+    ],
+    "ramp_speedup": 0.8285464084116229,
+    "steady_speedup": 1.1875040189630777
+  },
+  {
+    "source": "autoscale-gpu-v3-large.json.gz",
+    "url": "https://abidlabs-gradio-queue-autoscale-poc.hf.space",
+    "workload": "large",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 6,
+        "ramp_seconds": 20.806864582991693,
+        "steady_seconds": 20.815596542001003,
+        "serving_pids": [
+          355
+        ],
+        "steady_serving_pids": [
+          355
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 63.226139068603516,
+        "peak_worker_gpu_gib": 61.57421875,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600762.2034132,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600830.47957,
+            "reason": "Replica ready",
+            "pid": 355
+          }
+        ],
+        "model": "Qwen/Qwen2.5-32B-Instruct"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 6,
+        "ramp_seconds": 20.155476749991067,
+        "steady_seconds": 20.125975000002654,
+        "serving_pids": [
+          553
+        ],
+        "steady_serving_pids": [
+          553
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 62.413414001464844,
+        "peak_worker_gpu_gib": 61.57421875,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600885.488937,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600923.3181252,
+            "reason": "Replica ready",
+            "pid": 553
+          },
+          {
+            "time": 1792600938.3071182,
+            "reason": "Insufficient system/unified memory headroom"
+          }
+        ],
+        "model": "Qwen/Qwen2.5-32B-Instruct"
+      }
+    ],
+    "ramp_speedup": 1.0323181555604193,
+    "steady_speedup": 1.034265248863633
+  },
+  {
+    "source": "autoscale-gpu-v3-medium.json.gz",
+    "url": "https://abidlabs-gradio-queue-autoscale-poc.hf.space",
+    "workload": "medium",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 12,
+        "ramp_seconds": 18.476376833976246,
+        "steady_seconds": 18.44464058300946,
+        "serving_pids": [
+          222
+        ],
+        "steady_serving_pids": [
+          222
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 16.202598571777344,
+        "peak_worker_gpu_gib": 14.712890625,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600620.4437265,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600654.1517315,
+            "reason": "Replica ready",
+            "pid": 222
+          }
+        ],
+        "model": "Qwen/Qwen2.5-7B-Instruct"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 12,
+        "ramp_seconds": 18.550500542012742,
+        "steady_seconds": 12.786515334009891,
+        "serving_pids": [
+          310,
+          332
+        ],
+        "steady_serving_pids": [
+          310,
+          332
+        ],
+        "max_observed_processes": 2,
+        "peak_worker_ram_gib": 15.511970520019531,
+        "peak_worker_gpu_gib": 14.712890625,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600698.7425392,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600719.260538,
+            "reason": "Replica ready",
+            "pid": 310
+          },
+          {
+            "time": 1792600727.0568178,
+            "reason": "Observed replica peak plus 25% margin and 15% device reserve fits"
+          },
+          {
+            "time": 1792600727.0568223,
+            "reason": "Initializing replica",
+            "workers": 2
+          },
+          {
+            "time": 1792600747.5581079,
+            "reason": "Replica ready",
+            "pid": 332
+          },
+          {
+            "time": 1792600756.74627,
+            "reason": "Replica performance observed",
+            "throughput": 0.9934940105864963,
+            "baseline_throughput": 0.6605881084074221,
+            "median_seconds": 2.013744432499834
+          },
+          {
+            "time": 1792600756.7462733,
+            "reason": "Extra replica retained: throughput improved"
+          }
+        ],
+        "model": "Qwen/Qwen2.5-7B-Instruct"
+      }
+    ],
+    "ramp_speedup": 0.9960042205940146,
+    "steady_speedup": 1.4425072117928757
+  },
+  {
+    "source": "autoscale-gpu-v3-python.json.gz",
+    "url": "https://abidlabs-gradio-queue-autoscale-poc.hf.space",
+    "workload": "python",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 12,
+        "ramp_seconds": 12.539533167000627,
+        "steady_seconds": 12.62313766698935,
+        "serving_pids": [
+          74
+        ],
+        "steady_serving_pids": [
+          74
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 0.1360626220703125,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600467.8206394,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600472.676371,
+            "reason": "Replica ready",
+            "pid": 74
+          }
+        ],
+        "model": "python"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 12,
+        "ramp_seconds": 9.516188500012504,
+        "steady_seconds": 6.434341459011193,
+        "serving_pids": [
+          102,
+          118
+        ],
+        "steady_serving_pids": [
+          102,
+          118
+        ],
+        "max_observed_processes": 2,
+        "peak_worker_ram_gib": 0.13628387451171875,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600502.830539,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600507.6964703,
+            "reason": "Replica ready",
+            "pid": 102
+          },
+          {
+            "time": 1792600512.9831383,
+            "reason": "Observed replica peak plus 25% margin and 15% device reserve fits"
+          },
+          {
+            "time": 1792600512.9831445,
+            "reason": "Initializing replica",
+            "workers": 2
+          },
+          {
+            "time": 1792600517.8163772,
+            "reason": "Replica ready",
+            "pid": 118
+          },
+          {
+            "time": 1792600524.5994377,
+            "reason": "Replica performance observed",
+            "throughput": 2.1241408086739253,
+            "baseline_throughput": 0.9796409019491515,
+            "median_seconds": 1.0132806075000644
+          },
+          {
+            "time": 1792600524.5994413,
+            "reason": "Extra replica retained: throughput improved"
+          }
+        ],
+        "model": "python"
+      }
+    ],
+    "ramp_speedup": 1.3177054202934453,
+    "steady_speedup": 1.9618383244661108
+  },
+  {
+    "source": "autoscale-mac-v3-kokoro.json.gz",
+    "url": "http://127.0.0.1:7869",
+    "workload": "kokoro",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 64,
+        "ramp_seconds": 32.24751241601189,
+        "steady_seconds": 33.22275299998,
+        "serving_pids": [
+          33531
+        ],
+        "steady_serving_pids": [
+          33531
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 1.4733428955078125,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600288.100341,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600293.3710191,
+            "reason": "Replica ready",
+            "pid": 33531
+          }
+        ],
+        "model": "kokoro"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 64,
+        "ramp_seconds": 22.086811999994097,
+        "steady_seconds": 19.025797125010286,
+        "serving_pids": [
+          33588,
+          33608
+        ],
+        "steady_serving_pids": [
+          33588,
+          33608
+        ],
+        "max_observed_processes": 2,
+        "peak_worker_ram_gib": 1.4840087890625,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600360.5215309,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600365.217324,
+            "reason": "Replica ready",
+            "pid": 33588
+          },
+          {
+            "time": 1792600367.751408,
+            "reason": "Observed replica peak plus 25% margin and 15% device reserve fits"
+          },
+          {
+            "time": 1792600367.751418,
+            "reason": "Initializing replica",
+            "workers": 2
+          },
+          {
+            "time": 1792600373.120106,
+            "reason": "Replica ready",
+            "pid": 33608
+          },
+          {
+            "time": 1792600375.608321,
+            "reason": "Replica performance observed",
+            "throughput": 3.408887780067051,
+            "baseline_throughput": 1.8219951712158626,
+            "median_seconds": 0.5889270619954914
+          },
+          {
+            "time": 1792600375.6083221,
+            "reason": "Extra replica retained: throughput improved"
+          }
+        ],
+        "model": "kokoro"
+      }
+    ],
+    "ramp_speedup": 1.4600347218974157,
+    "steady_speedup": 1.746195062508428
+  },
+  {
+    "source": "autoscale-mac-v3-large.json.gz",
+    "url": "http://127.0.0.1:7869",
+    "workload": "large",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 6,
+        "ramp_seconds": 22.759574291994795,
+        "steady_seconds": 22.717794708005385,
+        "serving_pids": [
+          33937
+        ],
+        "steady_serving_pids": [
+          33937
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 7.419516012072563,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600493.770705,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600497.231075,
+            "reason": "Replica ready",
+            "pid": 33937
+          }
+        ],
+        "model": "llama-2-7b.Q8_0.gguf"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 6,
+        "ramp_seconds": 22.63204399999813,
+        "steady_seconds": 23.076704875013093,
+        "serving_pids": [
+          33978
+        ],
+        "steady_serving_pids": [
+          33978
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 7.419119372963905,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600554.370383,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600557.595744,
+            "reason": "Replica ready",
+            "pid": 33978
+          },
+          {
+            "time": 1792600572.935925,
+            "reason": "Insufficient system/unified memory headroom"
+          }
+        ],
+        "model": "llama-2-7b.Q8_0.gguf"
+      }
+    ],
+    "ramp_speedup": 1.0056349436222674,
+    "steady_speedup": 0.9844470790369935
+  },
+  {
+    "source": "autoscale-mac-v3-medium.json.gz",
+    "url": "http://127.0.0.1:7869",
+    "workload": "medium",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 6,
+        "ramp_seconds": 14.793789249990368,
+        "steady_seconds": 16.20998208297533,
+        "serving_pids": [
+          33657
+        ],
+        "steady_serving_pids": [
+          33657
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 4.3167572021484375,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600408.161438,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600410.4770508,
+            "reason": "Replica ready",
+            "pid": 33657
+          }
+        ],
+        "model": "llama-2-7b.Q4_0.gguf"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 6,
+        "ramp_seconds": 14.765553833014565,
+        "steady_seconds": 13.826433999987785,
+        "serving_pids": [
+          33781
+        ],
+        "steady_serving_pids": [
+          33781
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 4.25247585773468,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600448.783185,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600451.914461,
+            "reason": "Replica ready",
+            "pid": 33781
+          },
+          {
+            "time": 1792600467.6560051,
+            "reason": "Insufficient system/unified memory headroom"
+          }
+        ],
+        "model": "llama-2-7b.Q4_0.gguf"
+      }
+    ],
+    "ramp_speedup": 1.0019122490964525,
+    "steady_speedup": 1.1723906600204832
+  },
+  {
+    "source": "autoscale-mac-v3-python.json.gz",
+    "url": "http://127.0.0.1:7869",
+    "workload": "python",
+    "runs": [
+      {
+        "autoscale": false,
+        "requests_per_burst": 12,
+        "ramp_seconds": 2.8612130000256,
+        "steady_seconds": 2.8267654170049354,
+        "serving_pids": [
+          33522
+        ],
+        "steady_serving_pids": [
+          33522
+        ],
+        "max_observed_processes": 1,
+        "peak_worker_ram_gib": 0.131866455078125,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600275.5673401,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600276.430402,
+            "reason": "Replica ready",
+            "pid": 33522
+          }
+        ],
+        "model": "python"
+      },
+      {
+        "autoscale": true,
+        "requests_per_burst": 12,
+        "ramp_seconds": 2.1860045829962473,
+        "steady_seconds": 1.5512105000088923,
+        "serving_pids": [
+          33526,
+          33529
+        ],
+        "steady_serving_pids": [
+          33526,
+          33529
+        ],
+        "max_observed_processes": 2,
+        "peak_worker_ram_gib": 0.1319427490234375,
+        "peak_worker_gpu_gib": 0.0,
+        "resources_initialized_once": true,
+        "last_events": [
+          {
+            "time": 1792600282.838757,
+            "reason": "Initializing replica",
+            "workers": 1
+          },
+          {
+            "time": 1792600283.5695848,
+            "reason": "Replica ready",
+            "pid": 33526
+          },
+          {
+            "time": 1792600284.911954,
+            "reason": "Observed replica peak plus 25% margin and 15% device reserve fits"
+          },
+          {
+            "time": 1792600284.9119601,
+            "reason": "Initializing replica",
+            "workers": 2
+          },
+          {
+            "time": 1792600285.708545,
+            "reason": "Replica ready",
+            "pid": 33529
+          },
+          {
+            "time": 1792600286.728255,
+            "reason": "Replica performance observed",
+            "throughput": 10.927489642565948,
+            "baseline_throughput": 4.206872970198562,
+            "median_seconds": 0.24080960398714524
+          },
+          {
+            "time": 1792600286.728256,
+            "reason": "Extra replica retained: throughput improved"
+          }
+        ],
+        "model": "python"
+      }
+    ],
+    "ramp_speedup": 1.3088778597636235,
+    "steady_speedup": 1.8222964691050836
+  }
+]

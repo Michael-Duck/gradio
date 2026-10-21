@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-21",
+  "policy_version": "poc-3",
+  "local": {
+    "machine": "Apple M5",
+    "unified_memory_bytes": 34359738368,
+    "python": "3.12.12"
+  },
+  "space": {
+    "repo": "abidlabs/gradio-queue-autoscale-poc",
+    "hardware": "a100-large",
+    "gpu_memory_bytes": 85899345920,
+    "container_memory_bytes": 152999997440
+  },
+  "packages": {
+    "gradio": "6.30.0 + this experimental branch",
+    "torch": "2.14.1",
+    "transformers": "5.19.0",
+    "kokoro": "0.9.4",
+    "llama-cpp-python": "0.3.36 (Mac Metal only)",
+    "psutil": "7.2.2",
+    "nvidia-ml-py": "13.615.71"
+  },
+  "notes": [
+    "Mac and CUDA LLM workloads use different models and runtimes. Compare autoscaling with the one-worker baseline within each workload, not across devices.",
+    "Mac also had other applications running. Memory admission uses observed available memory.",
+    "These are small proof-of-concept runs with one fixed input."
+  ]
+}

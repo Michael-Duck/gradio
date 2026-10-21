@@ -1,0 +1,6 @@
+{
+  "median_ms": 0.22920900664757937,
+  "p95_ms": 0.275792001048103,
+  "requests": 500,
+  "scope": "Warm executor round-trip, excludes HTTP, queue waiting, serialization of large values, and model work"
+}

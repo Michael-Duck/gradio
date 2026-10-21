@@ -171,6 +171,65 @@ class Server(App):
         super().__init__(**init_kwargs)
         self._deferred_apis: list[tuple[Callable, dict[str, Any]]] = []
         self._mcp = _MCPNamespace()
+        self._process_resources = []
+        self._process_functions = []
+        self._process_pool = None
+
+    def resource(self, fn=None):
+        """PoC: initialize once in each persistent queue worker."""
+        from gradio.processing.resource import resource
+
+        def decorate(func):
+            wrapped = resource(func)
+            self._process_resources.append(wrapped)
+            return wrapped
+
+        return decorate(fn) if fn is not None else decorate
+
+    def queue(
+        self,
+        fn=None,
+        *,
+        executor="process",
+        workers="auto",
+        autoscale=True,
+        concurrency_limit=None,
+        **kwargs,
+    ):
+        """Experimental persistent process queue, with a two-replica autoscale ceiling."""
+        if executor != "process" or workers not in ("auto", 1):
+            raise ValueError("PoC supports executor='process' and workers='auto' or 1")
+        if concurrency_limit not in (None, 1):
+            raise ValueError("PoC supports concurrency_limit=None or 1")
+
+        def decorate(func):
+            import inspect
+
+            index = len(self._process_functions)
+            self._process_functions.append(func)
+            registered = func
+            if not os.environ.get("GRADIO_PROCESS_WORKER"):
+                from gradio.processing.pool import Pool
+
+                maximum = (
+                    1 if not autoscale or workers == 1 or concurrency_limit == 1 else 2
+                )
+                if self._process_pool is None:
+                    path = inspect.getsourcefile(func)
+                    if not path:
+                        raise ValueError(
+                            "Process queue functions must live in an importable app file"
+                        )
+                    self._process_pool = Pool(path, max_workers=maximum)
+                elif self._process_pool.max_workers != maximum:
+                    raise ValueError(
+                        "PoC endpoints in the same app must use the same pool policy"
+                    )
+                registered = self._process_pool.wrap(func, index)
+            self.api(registered, concurrency_limit=concurrency_limit, **kwargs)
+            return func
+
+        return decorate(fn) if fn is not None else decorate
 
     @property
     def mcp(self) -> _MCPNamespace:
@@ -282,6 +341,22 @@ class Server(App):
         Returns:
             Tuple of (fastapi_app, local_url, share_url).
         """
+        if os.environ.get("GRADIO_PROCESS_WORKER"):
+            return self, "", ""
+        if self._process_pool:
+            from contextlib import asynccontextmanager
+
+            original = self.router.lifespan_context
+
+            @asynccontextmanager
+            async def lifespan(app):
+                try:
+                    async with original(app) as state:
+                        yield state
+                finally:
+                    self._process_pool.close()
+
+            self.router.lifespan_context = lifespan
         from gradio.blocks import Blocks
         from gradio.events import api as gr_api
 
