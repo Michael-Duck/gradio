@@ -15,11 +15,15 @@ All eight cases completed with policy `poc-3`, using real HTTP/SSE requests and 
 
 These are small PoC measurements, not general performance guarantees. Timing differences in rows that retained one worker are run-to-run variation, not a scaling gain. Mac and A100 LLM tests use different models/runtimes; compare each auto run with its own one-worker baseline. Kokoro uses CPU on the Mac and CUDA on the A100.
 
+![Measured process autoscaling results](results/autoscale-results.png)
+
+Regenerate the figure with `python demo/autoscale/plot_results.py` (requires Matplotlib).
+
 ## What the evidence confirms
 
 - Every observed ready worker initialized its resource exactly once. Repeated requests reused the same worker/model; scaling created a separate model in a new PID.
 - CPU and Kokoro requests used two serving processes on both devices. The A100 7B model also used two serving processes.
-- The A100 32B worker peaked at roughly 66 GB of CUDA memory. The controller logged `Insufficient GPU memory headroom` and never attempted a second replica.
+- The A100 32B worker peaked at roughly 66 GB of CUDA memory. The final run logged `Insufficient system/unified memory headroom` (the system RAM guard runs first) and never attempted a second replica. At that VRAM footprint, two copies would not fit on the 80 GiB GPU either.
 - The Mac Q4/Q8 workers peaked around 4.6/8.0 GB of process/unified memory. With other applications running, the reserve check rejected a second replica. This is not a claim that a 32 GiB Mac can never hold two such models.
 - All LLM results contained exactly 64 generated tokens. Kokoro returned nonempty audio sample counts, and CPU results matched the expected checksum.
 - No OOM occurred in the completed test matrix.
