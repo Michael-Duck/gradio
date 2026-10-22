@@ -1,5 +1,7 @@
 import dataclasses
+import os
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -56,36 +58,37 @@ class TestReload:
         assert demo_dir in config.watch_dirs
 
 
+@pytest.fixture
+def run_cli(monkeypatch):
+    """Run the reload CLI without launching anything.
+
+    Returns the CliRunner result plus the argv and env the app would have
+    been launched with.
+    """
+    launched: list[tuple[list[str], dict]] = []
+
+    class FakePopen:
+        def __init__(self, args, **kwargs):
+            launched.append((args, kwargs))
+
+        def poll(self):
+            return 0
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr(subprocess, "Popen", FakePopen)
+
+    def invoke(*args: str):
+        result = CliRunner().invoke(build_app(), list(args))
+        argv, kwargs = launched[-1] if launched else ([], {})
+        return result, argv, kwargs
+
+    return invoke
+
+
 class TestReloadCliArgs:
     """`gradio app.py -- --name Gretel` forwards `--name Gretel` to the script."""
-
-    @pytest.fixture
-    def run_cli(self, monkeypatch):
-        """Run the reload CLI without launching anything.
-
-        Returns the CliRunner result plus the argv and env the app would have
-        been launched with.
-        """
-        launched: list[tuple[list[str], dict]] = []
-
-        class FakePopen:
-            def __init__(self, args, **kwargs):
-                launched.append((args, kwargs))
-
-            def poll(self):
-                return 0
-
-            def wait(self):
-                return 0
-
-        monkeypatch.setattr(subprocess, "Popen", FakePopen)
-
-        def invoke(*args: str):
-            result = CliRunner().invoke(build_app(), list(args))
-            argv, kwargs = launched[-1] if launched else ([], {})
-            return result, argv, kwargs
-
-        return invoke
 
     def test_args_after_separator_are_forwarded_to_the_app(self, run_cli):
         result, argv, _ = run_cli(
@@ -116,6 +119,77 @@ class TestReloadCliArgs:
         assert "No such option" in " ".join(
             result.output.replace("\u2502", " ").split()
         )
+
+
+class TestReloadModuleArgs:
+    """`gradio package.app` runs a module the way `python -m package.app` runs it."""
+
+    @pytest.fixture
+    def module_app(self, tmp_path, monkeypatch):
+        """A package whose `__main__` launches a Gradio app."""
+        # A package that was imported by an earlier test would be resolved to
+        # the file of that test, so drop it from the module cache.
+        for name in list(sys.modules):
+            if name == "mypkg" or name.startswith("mypkg."):
+                del sys.modules[name]
+        package = tmp_path / "mypkg"
+        (package / "app").mkdir(parents=True)
+        (package / "__init__.py").write_text("")
+        (package / "app" / "__init__.py").write_text("")
+        (package / "app" / "helper.py").write_text("def greet():\n    return 'hi'\n")
+        main_file = package / "app" / "__main__.py"
+        main_file.write_text(
+            "import gradio as gr\n"
+            "\n"
+            "from .helper import greet\n"
+            "\n"
+            "with gr.Blocks() as demo:\n"
+            "    gr.Textbox(value=greet())\n"
+            "\n"
+            "demo.launch()\n"
+        )
+        monkeypatch.syspath_prepend(str(tmp_path))
+        return main_file
+
+    def test_a_module_is_watched_as_its_main_file(self, module_app):
+        module_name, path, watch_dirs = _setup_config(Path("mypkg.app"))
+        # `python -m mypkg.app` runs `mypkg/app/__main__.py`.
+        assert module_name == "mypkg.app.__main__"
+        assert Path(path).resolve() == module_app.resolve()
+        assert str(module_app.parent) in watch_dirs
+
+    def test_a_module_is_launched_with_python_m(self, run_cli, module_app):
+        result, argv, kwargs = run_cli("mypkg.app")
+        assert result.exit_code == 0, result.output
+        assert argv == [sys.executable, "-u", "-m", "mypkg.app"]
+        # The reloader watches the file that `python -m` runs.
+        assert kwargs["env"]["GRADIO_WATCH_DEMO_PATH"] == str(module_app)
+        assert kwargs["env"]["GRADIO_WATCH_MODULE_NAME"] == "mypkg.app.__main__"
+
+    def test_a_file_is_still_launched_by_path(self, run_cli):
+        result, argv, _ = run_cli("demo/calculator/run.py")
+        assert result.exit_code == 0, result.output
+        assert argv[:2] == [sys.executable, "-u"]
+        assert Path(argv[2]) == Path(os.path.abspath("demo/calculator/run.py"))
+        assert "-m" not in argv
+
+    def test_a_module_that_does_not_exist_is_reported(self, run_cli):
+        result, argv, _ = run_cli("does.not.exist")
+        assert result.exit_code != 0
+        assert "does.not.exist" in " ".join(result.output.split())
+        assert argv == []
+
+    def test_a_package_without_a_main_module_is_reported(
+        self, tmp_path, monkeypatch, run_cli
+    ):
+        package = tmp_path / "nopkg"
+        package.mkdir()
+        (package / "__init__.py").write_text("")
+        monkeypatch.syspath_prepend(str(tmp_path))
+        result, argv, _ = run_cli("nopkg")
+        assert result.exit_code != 0
+        assert "nopkg" in " ".join(result.output.split())
+        assert argv == []
 
 
 def test_reassign_pending_event_fns():
