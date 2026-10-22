@@ -109,6 +109,30 @@ Here `gradio` reads the first `--demo-name`, and your app receives the second.
 
 As a small aside, this auto-reloading happens if you change your `run.py` source code or the Gradio source code. Meaning that this can be useful if you decide to [contribute to Gradio itself](https://github.com/gradio-app/gradio/blob/main/CONTRIBUTING.md) ✅
 
+### Running an app that lives in a package
+
+If your app lives in a package instead of in a single file, you can pass the name of the module rather than the path of the file. For example, if your app is in `src/package/app/__main__.py`, run `gradio package.app` from the `src` directory:
+
+```bash
+gradio package.app
+```
+
+Gradio then runs your app the same way `python -m package.app` runs it, so the app is imported as a module and the relative imports of your package keep working:
+
+```python
+# src/package/app/__main__.py
+import gradio as gr
+
+from .helper import greet  # this import works with `gradio package.app`
+
+with gr.Blocks() as demo:
+    gr.Textbox(value=greet())
+
+demo.launch()
+```
+
+Pointing `gradio` at the `__main__.py` file itself does not work for such an app, because the file is then run as a script, where relative imports cannot be resolved.
+
 
 ## Controlling the Reload 🎛️
 
